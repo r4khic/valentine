@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ты — моя Вселенная 💫</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+  <style>
+    /* ============================================
+       GLOBAL STYLES
+       ============================================ */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #0b0f1a;
+      --depth: #1e2a4a;
+      --accent: #ff4d6d;
+      --glow: #ffd6e0;
+      --text: #e8e6f0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-snap-type: y proximity;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      overflow-x: hidden;
+      cursor: default;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+    }
+
+    section {
+      min-height: 100vh;
+      position: relative;
+      scroll-snap-align: start;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    /* ============================================
+       STAR CURSOR TRAIL
+       ============================================ */
+    .cursor-star {
+      position: fixed;
+      pointer-events: none;
+      z-index: 10000;
+      font-size: 12px;
+      opacity: 1;
+      transition: none;
+      animation: cursorFade 0.8s ease-out forwards;
+    }
+
+    @keyframes cursorFade {
+      0% { opacity: 1; transform: scale(1) translateY(0); }
+      100% { opacity: 0; transform: scale(0.3) translateY(-20px); }
+    }
+
+    /* ============================================
+       SECTION 1: HERO
+       ============================================ */
+    #hero {
+      z-index: 1;
+    }
+
+    #tsparticles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    .hero-content {
+      text-align: center;
+      z-index: 2;
+      position: relative;
+      animation: fadeInUp 1.5s ease-out;
+    }
+
+    .hero-content h1 {
+      font-size: clamp(1.8rem, 5vw, 3.5rem);
+      line-height: 1.3;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--glow), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-content p {
+      font-size: clamp(1rem, 2.5vw, 1.4rem);
+      opacity: 0.8;
+      margin-bottom: 2.5rem;
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .btn-universe {
+      display: inline-block;
+      padding: 1rem 2.5rem;
+      background: linear-gradient(135deg, var(--accent), #c9184a);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 0 30px rgba(255, 77, 109, 0.3);
+      text-decoration: none;
+    }
+
+    .btn-universe:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 50px rgba(255, 77, 109, 0.5);
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============================================
+       SECTION 2: STAR MAP
+       ============================================ */
+    #starmap {
+      background: radial-gradient(ellipse at center, #111833 0%, var(--bg) 70%);
+      z-index: 1;
+    }
+
+    .starmap-title {
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      margin-bottom: 1rem;
+      color: var(--glow);
+      text-align: center;
+      z-index: 2;
+    }
+
+    .starmap-hint {
+      font-size: 0.9rem;
+      opacity: 0.5;
+      margin-bottom: 1.5rem;
+      z-index: 2;
+    }
+
+    .starmap-container {
+      position: relative;
+      width: min(90vw, 800px);
+      height: min(70vh, 600px);
+      z-index: 2;
+    }
+
+    .starmap-canvas {
+      width: 100%;
+      height: 100%;
+    }
+
+    .star-point {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff 0%, rgba(255, 214, 224, 0.6) 40%, transparent 70%);
+      cursor: pointer;
+      transition: transform 0.3s;
+      animation: starTwinkle 3s ease-in-out infinite;
+    }
+
+    .star-point::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 214, 224, 0.2) 0%, transparent 70%);
+    }
+
+    .star-point:hover {
+      transform: scale(1.5);
+    }
+
+    .star-point.active {
+      animation: starPulse 1s ease-in-out infinite;
+      background: radial-gradient(circle, #fff 0%, rgba(255, 77, 109, 0.6) 40%, transparent 70%);
+    }
+
+    @keyframes starTwinkle {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes starPulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 15px var(--accent); }
+      50% { transform: scale(1.3); box-shadow: 0 0 30px var(--accent); }
+    }
+
+    .star-tooltip {
+      position: absolute;
+      background: rgba(30, 42, 74, 0.95);
+      border: 1px solid rgba(255, 214, 224, 0.3);
+      border-radius: 12px;
+      padding: 1rem 1.2rem;
+      max-width: 250px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: var(--glow);
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.3s, transform 0.3s;
+      z-index: 10;
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .star-tooltip.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .constellation-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* ============================================
+       SECTION 3: 10 REASONS
+       ============================================ */
+    #reasons {
+      background: linear-gradient(180deg, var(--bg) 0%, #0d1225 50%, var(--bg) 100%);
+      z-index: 1;
+      padding: 4rem 2rem;
+    }
+
+    .reasons-title {
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      color: var(--glow);
+      margin-bottom: 2.5rem;
+      text-align: center;
+    }
+
+    .reasons-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+      max-width: 800px;
+      width: 100%;
+    }
+
+    .reason-card {
+      perspective: 800px;
+      height: 180px;
+      cursor: pointer;
+    }
+
+    .reason-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s ease;
+      transform-style: preserve-3d;
+    }
+
+    .reason-card.flipped .reason-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .reason-front, .reason-back {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .reason-front {
+      background: linear-gradient(135deg, var(--depth), #162040);
+      border: 1px solid rgba(255, 214, 224, 0.1);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      color: var(--glow);
+      transition: box-shadow 0.3s;
+    }
+
+    .reason-card:hover .reason-front {
+      box-shadow: 0 0 25px rgba(255, 214, 224, 0.15);
+    }
+
+    .reason-back {
+      background: linear-gradient(135deg, #1a1035, var(--depth));
+      border: 1px solid rgba(255, 77, 109, 0.3);
+      transform: rotateY(180deg);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    /* ============================================
+       SECTION 4: MINI-GAME
+       ============================================ */
+    #game {
+      background: radial-gradient(ellipse at center, #111833 0%, var(--bg) 70%);
+      z-index: 1;
+    }
+
+    .game-question {
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      font-family: 'Cormorant Garamond', serif;
+      margin-bottom: 2.5rem;
+      text-align: center;
+    }
+
+    .game-buttons {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      width: 100%;
+      height: 200px;
+    }
+
+    .btn-yes {
+      padding: 1.2rem 3rem;
+      background: linear-gradient(135deg, var(--accent), #c9184a);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      font-size: 1.3rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 0 20px rgba(255, 77, 109, 0.3);
+      z-index: 5;
+    }
+
+    .btn-yes:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 40px rgba(255, 77, 109, 0.5);
+    }
+
+    .btn-no {
+      padding: 1rem 2.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 50px;
+      font-size: 1.2rem;
+      font-family: 'Cormorant Garamond', serif;
+      cursor: pointer;
+      transition: transform 0.2s, opacity 0.2s;
+      position: absolute;
+      z-index: 5;
+    }
+
+    /* ============================================
+       HEART EXPLOSION
+       ============================================ */
+    .heart-particle {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      font-size: 20px;
+      animation: heartBurst 1.5s ease-out forwards;
+    }
+
+    @keyframes heartBurst {
+      0% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(0.5) translateY(-200px); }
+    }
+
+    /* ============================================
+       SECTION 5: FINALE
+       ============================================ */
+    #finale {
+      background: radial-gradient(ellipse at center, #111833 0%, var(--bg) 70%);
+      z-index: 1;
+      text-align: center;
+    }
+
+    .finale-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.2rem, 3.5vw, 2rem);
+      line-height: 1.8;
+      max-width: 700px;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 1.5s ease, transform 1.5s ease;
+      color: var(--glow);
+    }
+
+    .finale-text.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .finale-final {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.4rem, 4vw, 2.5rem);
+      margin-top: 3rem;
+      opacity: 0;
+      transition: opacity 2s ease 1s;
+      background: linear-gradient(135deg, var(--glow), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .finale-final.visible {
+      opacity: 1;
+    }
+
+
+    /* ============================================
+       SCROLL REVEAL ANIMATION
+       ============================================ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 600px) {
+      .reasons-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .reason-card {
+        height: 150px;
+      }
+
+      .game-buttons {
+        height: 250px;
+      }
+
+      section {
+        padding: 1.5rem;
+      }
+
+      .star-tooltip {
+        max-width: 200px;
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================
+       PARTICLES BACKGROUND
+       ============================================ -->
+  <div id="tsparticles"></div>
+
+  <!-- ============================================
+       SECTION 1: HERO
+       ============================================ -->
+  <section id="hero">
+    <div class="hero-content">
+      <!-- CUSTOMIZE: Main hero heading -->
+      <h1>Из миллиардов людей во Вселенной<br>я выбрал тебя</h1>
+      <!-- CUSTOMIZE: Subtitle -->
+      <p>Потому что ты — моя самая яркая звезда ✨</p>
+      <a href="#starmap" class="btn-universe">Показать нашу Вселенную</a>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SECTION 2: STAR MAP (MEMORIES)
+       ============================================ -->
+  <section id="starmap">
+    <h2 class="starmap-title reveal">Карта наших звёзд</h2>
+    <p class="starmap-hint reveal">нажми на звезду, чтобы увидеть воспоминание</p>
+    <div class="starmap-container">
+      <svg class="constellation-line" id="constellationSvg"></svg>
+      <!-- Stars are positioned via JS -->
+    </div>
+  </section>
+
+  <!-- ============================================
+       SECTION 3: 10 REASONS
+       ============================================ -->
+  <section id="reasons">
+    <h2 class="reasons-title reveal">10 причин, почему я люблю тебя</h2>
+    <div class="reasons-grid" id="reasonsGrid">
+      <!-- Cards generated by JS -->
+    </div>
+  </section>
+
+  <!-- ============================================
+       SECTION 4: MINI-GAME
+       ============================================ -->
+  <section id="game">
+    <!-- CUSTOMIZE: Game question -->
+    <h2 class="game-question reveal">Скажи честно… Ты любишь меня?</h2>
+    <div class="game-buttons">
+      <button class="btn-yes" id="btnYes">Да ❤️</button>
+      <button class="btn-no" id="btnNo">Нет 😏</button>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SECTION 5: FINALE
+       ============================================ -->
+  <section id="finale">
+    <!-- CUSTOMIZE: Finale main text -->
+    <p class="finale-text" id="finaleText">
+      И если бы мне дали шанс прожить всё заново —<br>
+      я бы снова выбрал тебя.<br>
+      Каждый раз. В любой вселенной.
+    </p>
+    <!-- CUSTOMIZE: Finale closing text -->
+    <p class="finale-final" id="finaleFinal">Теперь эта Вселенная принадлежит нам 💫</p>
+  </section>
+
+  <!-- Audio: place song.mp3 in the same directory -->
+  <audio id="songAudio" src="song.mp3" preload="auto" loop></audio>
+
+  <!-- Overlay to start music on first interaction (browser autoplay policy) -->
+  <div id="musicOverlay" style="
+    position: fixed; inset: 0; z-index: 99999;
+    display: flex; align-items: flex-end; justify-content: center;
+    padding-bottom: 2rem; pointer-events: none;
+  ">
+    <button id="btnStartMusic" style="
+      pointer-events: auto;
+      padding: 0.7rem 1.8rem;
+      background: rgba(255, 77, 109, 0.25);
+      border: 1px solid rgba(255, 77, 109, 0.4);
+      color: var(--glow);
+      border-radius: 50px;
+      font-size: 0.95rem;
+      font-family: 'Cormorant Garamond', serif;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: opacity 0.5s;
+    ">♪ Включить музыку</button>
+  </div>
+
+  <script>
+    /* ============================================
+       tsParticles — Star Background
+       ============================================ */
+    tsParticles.load("tsparticles", {
+      fullScreen: false,
+      particles: {
+        number: { value: 120, density: { enable: true, area: 800 } },
+        color: { value: ["#ffffff", "#ffd6e0", "#c8b6ff"] },
+        shape: { type: "circle" },
+        opacity: {
+          value: { min: 0.2, max: 0.8 },
+          animation: { enable: true, speed: 0.8, minimumValue: 0.1, sync: false }
+        },
+        size: {
+          value: { min: 0.5, max: 2.5 },
+          animation: { enable: true, speed: 1, minimumValue: 0.3, sync: false }
+        },
+        move: {
+          enable: true,
+          speed: 0.15,
+          direction: "none",
+          outModes: "out"
+        }
+      },
+      interactivity: {
+        events: {
+          onHover: { enable: true, mode: "grab", parallax: { enable: true, force: 30, smooth: 20 } }
+        },
+        modes: {
+          grab: { distance: 120, links: { opacity: 0.15, color: "#ffd6e0" } }
+        }
+      },
+      detectRetina: true
+    });
+
+    /* ============================================
+       CURSOR STAR TRAIL
+       ============================================ */
+    let lastTrail = 0;
+    document.addEventListener("mousemove", (e) => {
+      const now = Date.now();
+      if (now - lastTrail < 60) return;
+      lastTrail = now;
+      const star = document.createElement("div");
+      star.className = "cursor-star";
+      star.textContent = ["✦", "✧", "·", "⋆"][Math.floor(Math.random() * 4)];
+      star.style.left = e.clientX + "px";
+      star.style.top = e.clientY + "px";
+      star.style.color = Math.random() > 0.5 ? "#ffd6e0" : "#ffffff";
+      document.body.appendChild(star);
+      setTimeout(() => star.remove(), 800);
+    });
+
+    /* ============================================
+       SCROLL REVEAL
+       ============================================ */
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+        }
+      });
+    }, { threshold: 0.2 });
+
+    document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
+
+    /* ============================================
+       SECTION 2: STAR MAP LOGIC
+       ============================================ */
+    const memories = [
+      /* CUSTOMIZE: Replace these memory texts with your own */
+      "День, когда мы впервые встретились",
+      "Тот вечер, когда ты смеялась и я понял — всё",
+      "Наш разговор до 3 ночи",
+      "Момент, когда я почувствовал, что влюбляюсь",
+      "Первое наше свидание",
+      "Когда ты впервые взяла меня за руку",
+      "Наш первый поцелуй",
+      "Когда я понял, что не хочу без тебя"
+    ];
+
+    // Star positions (percentage-based for responsiveness)
+    const starPositions = [
+      { x: 15, y: 20 }, { x: 75, y: 12 }, { x: 45, y: 35 },
+      { x: 85, y: 45 }, { x: 25, y: 55 }, { x: 60, y: 65 },
+      { x: 10, y: 78 }, { x: 78, y: 80 }
+    ];
+
+    const container = document.querySelector(".starmap-container");
+    const svgEl = document.getElementById("constellationSvg");
+    const clickedStars = [];
+
+    starPositions.forEach((pos, i) => {
+      const star = document.createElement("div");
+      star.className = "star-point";
+      star.style.left = pos.x + "%";
+      star.style.top = pos.y + "%";
+      star.style.animationDelay = (Math.random() * 3) + "s";
+      star.dataset.index = i;
+
+      const tooltip = document.createElement("div");
+      tooltip.className = "star-tooltip";
+      tooltip.textContent = memories[i];
+
+      // Position tooltip to avoid overflow
+      if (pos.x > 50) {
+        tooltip.style.right = "30px";
+      } else {
+        tooltip.style.left = "30px";
+      }
+      if (pos.y > 60) {
+        tooltip.style.bottom = "30px";
+      } else {
+        tooltip.style.top = "30px";
+      }
+
+      star.appendChild(tooltip);
+      container.appendChild(star);
+
+      star.addEventListener("click", () => {
+        star.classList.toggle("active");
+        tooltip.classList.toggle("visible");
+
+        const idx = clickedStars.indexOf(i);
+        if (idx === -1) {
+          clickedStars.push(i);
+        } else {
+          clickedStars.splice(idx, 1);
+        }
+        drawConstellation();
+      });
+    });
+
+    function drawConstellation() {
+      svgEl.innerHTML = "";
+      if (clickedStars.length < 2) return;
+
+      for (let i = 0; i < clickedStars.length - 1; i++) {
+        const a = starPositions[clickedStars[i]];
+        const b = starPositions[clickedStars[i + 1]];
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", a.x + "%");
+        line.setAttribute("y1", a.y + "%");
+        line.setAttribute("x2", b.x + "%");
+        line.setAttribute("y2", b.y + "%");
+        line.setAttribute("stroke", "rgba(255, 214, 224, 0.25)");
+        line.setAttribute("stroke-width", "1");
+        line.setAttribute("stroke-dasharray", "4 4");
+
+        // Animate the line drawing
+        const length = 1000;
+        line.setAttribute("stroke-dashoffset", length);
+        line.style.animation = `drawLine 1s ease forwards ${i * 0.2}s`;
+        svgEl.appendChild(line);
+      }
+
+      // Add a style for the animation if not present
+      if (!document.getElementById("constellationStyle")) {
+        const style = document.createElement("style");
+        style.id = "constellationStyle";
+        style.textContent = `
+          @keyframes drawLine {
+            to { stroke-dashoffset: 0; }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+    }
+
+    /* ============================================
+       SECTION 3: REASON CARDS
+       ============================================ */
+    const reasons = [
+      /* CUSTOMIZE: Replace these reason texts with your own */
+      "Как ты улыбаешься — мир становится тише",
+      "Как смотришь на меня",
+      "Как поддерживаешь в трудные моменты",
+      "Как злишься — и всё равно остаёшься милой",
+      "Как заботишься",
+      "Как молчишь рядом — и этого достаточно",
+      "Как пишешь 'доехал?' — и я чувствую заботу",
+      "Как переживаешь за меня",
+      "Как обнимаешь — будто весь мир исчезает",
+      "Как просто существуешь в моей жизни"
+    ];
+
+    const grid = document.getElementById("reasonsGrid");
+    reasons.forEach((reason, i) => {
+      const card = document.createElement("div");
+      card.className = "reason-card reveal";
+      card.innerHTML = `
+        <div class="reason-card-inner">
+          <div class="reason-front">⭐ Причина №${i + 1}</div>
+          <div class="reason-back">${reason}</div>
+        </div>
+      `;
+      card.addEventListener("click", () => card.classList.toggle("flipped"));
+      grid.appendChild(card);
+      revealObserver.observe(card);
+    });
+
+    /* ============================================
+       SECTION 4: MINI-GAME ("NO" BUTTON RUNS AWAY)
+       ============================================ */
+    const btnNo = document.getElementById("btnNo");
+    const btnYes = document.getElementById("btnYes");
+    let noEscapeCount = 0;
+
+    function escapeNo() {
+      noEscapeCount++;
+      const container = btnNo.parentElement;
+      const rect = container.getBoundingClientRect();
+      const btnRect = btnNo.getBoundingClientRect();
+
+      const maxX = rect.width - btnRect.width - 20;
+      const maxY = rect.height - btnRect.height - 20;
+
+      const newX = Math.random() * maxX;
+      const newY = Math.random() * maxY;
+
+      btnNo.style.left = newX + "px";
+      btnNo.style.top = newY + "px";
+
+      // Get smaller and faster
+      const scale = Math.max(0.4, 1 - noEscapeCount * 0.1);
+      btnNo.style.transform = `scale(${scale})`;
+      btnNo.style.transition = `all ${Math.max(0.05, 0.2 - noEscapeCount * 0.02)}s ease`;
+    }
+
+    btnNo.addEventListener("mouseenter", escapeNo);
+    btnNo.addEventListener("touchstart", (e) => { e.preventDefault(); escapeNo(); });
+
+    /* ============================================
+       SECTION 4 → 5: "YES" BUTTON → HEART EXPLOSION
+       ============================================ */
+    let gameFinished = false;
+
+    btnYes.addEventListener("click", () => {
+      if (gameFinished) return;
+      gameFinished = true;
+
+      // Heart explosion
+      for (let i = 0; i < 40; i++) {
+        setTimeout(() => {
+          const heart = document.createElement("div");
+          heart.className = "heart-particle";
+          heart.textContent = ["❤️", "💕", "💗", "💖", "✨"][Math.floor(Math.random() * 5)];
+          heart.style.left = (btnYes.getBoundingClientRect().left + btnYes.offsetWidth / 2) + "px";
+          heart.style.top = (btnYes.getBoundingClientRect().top + btnYes.offsetHeight / 2) + "px";
+          heart.style.fontSize = (15 + Math.random() * 25) + "px";
+
+          const angle = Math.random() * Math.PI * 2;
+          const dist = 100 + Math.random() * 200;
+          const tx = Math.cos(angle) * dist;
+          const ty = Math.sin(angle) * dist - 100;
+          heart.style.animation = "none";
+          heart.style.transition = "all 1.5s ease-out";
+
+          document.body.appendChild(heart);
+
+          requestAnimationFrame(() => {
+            heart.style.transform = `translate(${tx}px, ${ty}px) scale(0.3)`;
+            heart.style.opacity = "0";
+          });
+
+          setTimeout(() => heart.remove(), 1500);
+        }, i * 40);
+      }
+
+      // Scroll to finale after explosion
+      setTimeout(() => {
+        document.getElementById("finale").scrollIntoView({ behavior: "smooth" });
+        showFinale();
+      }, 1200);
+    });
+
+    /* ============================================
+       MUSIC — plays from the start
+       ============================================ */
+    const audio = document.getElementById("songAudio");
+    const musicOverlay = document.getElementById("musicOverlay");
+    const btnStartMusic = document.getElementById("btnStartMusic");
+
+    function startMusic() {
+      audio.play().then(() => {
+        musicOverlay.style.opacity = "0";
+        setTimeout(() => musicOverlay.remove(), 500);
+      }).catch(() => {
+        // Autoplay blocked — keep the button visible
+      });
+    }
+
+    // Try autoplay immediately
+    startMusic();
+
+    // Fallback: start on first user interaction
+    btnStartMusic.addEventListener("click", () => {
+      audio.play();
+      musicOverlay.style.opacity = "0";
+      setTimeout(() => musicOverlay.remove(), 500);
+    });
+
+    // Also try on any first touch/click (covers all cases)
+    function onFirstInteraction() {
+      if (audio.paused) {
+        audio.play().catch(() => {});
+      }
+      if (musicOverlay.parentNode) {
+        musicOverlay.style.opacity = "0";
+        setTimeout(() => { if (musicOverlay.parentNode) musicOverlay.remove(); }, 500);
+      }
+      document.removeEventListener("click", onFirstInteraction);
+      document.removeEventListener("touchstart", onFirstInteraction);
+    }
+    document.addEventListener("click", onFirstInteraction);
+    document.addEventListener("touchstart", onFirstInteraction);
+
+    /* ============================================
+       SECTION 5: FINALE
+       ============================================ */
+    function showFinale() {
+      setTimeout(() => {
+        document.getElementById("finaleText").classList.add("visible");
+      }, 500);
+
+      setTimeout(() => {
+        document.getElementById("finaleFinal").classList.add("visible");
+      }, 2000);
+    }
+
+    // Also show finale if user scrolls to it directly
+    const finaleObserver = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && !gameFinished) {
+        showFinale();
+      }
+    }, { threshold: 0.5 });
+    finaleObserver.observe(document.getElementById("finale"));
+  </script>
+</body>
+</html>
